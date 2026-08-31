@@ -4,7 +4,8 @@ import { AuthForm, CategoryFilter, DeleteDialog, EmptyState, Header, MapPlacehol
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { categories, points, projects, type Point } from './data'
+import { categories, points, projects, } from './mocks/data'
+import type { Point } from './types/point'
 
 function HomePage() {
   const features = [

@@ -9,7 +9,9 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
-import { categories, type Point, type Project } from './data'
+import { categories } from './mocks/data'
+import type { Project } from './types/project'
+import type { Point } from './types/point'
 
 const linkButton = (variant: 'default' | 'outline' | 'ghost' | 'link' = 'default', size: 'default' | 'sm' | 'lg' = 'default') => buttonVariants({ variant, size })
 
