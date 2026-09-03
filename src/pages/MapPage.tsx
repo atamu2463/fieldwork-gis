@@ -186,7 +186,7 @@ export function MapPage() {
 
           <section className="order-1 min-w-0 bg-muted p-3 md:order-2 md:p-5">
             <MapPlaceholder
-              selected={selected}
+              points={filtered}
               picking={mode === 'pick'}
               onMapClick={() => setMode('create')}
               onSelect={selectPoint}
