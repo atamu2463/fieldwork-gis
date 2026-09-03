@@ -1,14 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 import { Header } from '@/components/layout/Header'
 import { ProjectForm } from '@/components/project/ProjectForm'
 import { buttonVariants } from '@/components/ui/button'
+import { projects } from '@/mocks/data'
 
 export function ProjectFormPage({
+  
   editing = false,
 }: {
   editing?: boolean
 }) {
+  const { id } = useParams()
+
+  const project = editing
+    ? projects.find((item) => item.id === id)
+    : undefined
+
   return (
     <>
       <Header authenticated />
@@ -32,7 +40,10 @@ export function ProjectFormPage({
         </p>
 
         <div className="mt-8">
-          <ProjectForm editing={editing} />
+          <ProjectForm
+           editing={editing}
+           project={project}
+          />
         </div>
       </main>
     </>
