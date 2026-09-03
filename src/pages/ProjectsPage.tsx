@@ -16,6 +16,15 @@ import { projects } from '@/mocks/data'
 
 export function ProjectsPage() {
   const [state, setState] = useState<'list' | 'empty' | 'loading'>('list')
+  const [projectItems, setProjectItems] = useState(projects)
+
+  const handleDelete = (projectId: string) => {
+    setProjectItems((currentProjects) =>
+      currentProjects.filter(
+       (project) => project.id !== projectId,
+      ),
+    )
+  }
 
   return (
     <>
@@ -94,10 +103,11 @@ export function ProjectsPage() {
           </div>
         ) : (
           <div className="mt-6 grid gap-5 md:grid-cols-2">
-            {projects.map((project) => (
+            {projectItems.map((project) => (
               <ProjectCard
                 key={project.id}
                 project={project}
+                onDelete={() => handleDelete(project.id)}
               />
             ))}
           </div>
