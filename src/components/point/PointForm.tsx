@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 import { Field } from '@/components/common/Field'
 import { categories } from '@/mocks/data'
-import type { Point } from '@/types/point'
+import type { Point, PointFormValues } from '@/types/point'
 
 export function PointForm({
   point,
@@ -28,7 +28,7 @@ export function PointForm({
   point?: Point
   title: string
   onCancel: () => void
-  onSave: () => void
+  onSave: (values: PointFormValues) => void
   onRelocate?: () => void
 }) {
   const items = categories.map((value) => ({
@@ -41,7 +41,16 @@ export function PointForm({
       className="flex flex-col gap-5"
       onSubmit={(e) => {
         e.preventDefault()
-        onSave()
+        const formData = new FormData(e.currentTarget)
+
+        const values: PointFormValues = {
+          name: String(formData.get('point-name') ?? ''),
+          category: String(formData.get('point-category') ?? ''),
+          memo: String(formData.get('point-memo') ?? ''),
+          surveyedAt: String(formData.get('surveyed-at') ?? ''),
+        }
+        
+        onSave(values)
       }}
     >
       <h2 className="font-heading text-xl font-semibold">
@@ -62,7 +71,10 @@ export function PointForm({
             <span className="text-destructive">*</span>
           </FieldLabel>
 
-          <Select items={items} defaultValue={point?.category}>
+          <Select
+           name="point-category"
+           items={items}
+           defaultValue={point?.category}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="選択してください" />
             </SelectTrigger>
@@ -99,6 +111,7 @@ export function PointForm({
 
           <Textarea
             id="point-memo"
+            name="point-memo"
             className="min-h-24 resize-y"
             defaultValue={point?.memo}
             placeholder="現地で気づいたこと"

@@ -10,7 +10,7 @@ import { PointPopup } from '@/components/point/PointPopup'
 import { Button } from '@/components/ui/button'
 
 import { categories, points, projects } from '@/mocks/data'
-import type { Point } from '@/types/point'
+import type { Point, PointFormValues } from '@/types/point'
 
 export function MapPage() {
   const { id } = useParams()
@@ -40,6 +40,45 @@ export function MapPage() {
     }, 2600)
   }
 
+  //地点登録
+  function handleCreatePoint(values: PointFormValues) {
+    const newPoint: Point = {
+      id: crypto.randomUUID(),
+      ...values,
+      latitude: 35.6812,
+      longitude: 139.7671,
+    }
+
+    setPointItems((currentPoints) => [
+      ...currentPoints,
+      newPoint,
+    ])
+
+    save('地点を登録しました')
+  }
+
+  //地点情報更新
+  function handleUpdatePoint(values: PointFormValues) {
+    if (!selected) {
+      return
+    }
+
+    setPointItems((currentPoints) =>
+      currentPoints.map((point) =>
+        point.id === selected.id
+          ? {
+              ...point,
+              ...values,
+            }
+          : point,
+      ),
+    )
+
+    save('地点情報を更新しました')
+  }
+
+
+  //地点選択
   function selectPoint(point: Point) {
     if (mode !== 'pick') {
       setSelected(
@@ -102,14 +141,14 @@ export function MapPage() {
               <PointForm
                 title="地点を登録"
                 onCancel={() => setMode('list')}
-                onSave={() => save('地点を登録しました')}
+                onSave={handleCreatePoint}
               />
             ) : mode === 'edit' && selected ? (
               <PointForm
                 title="地点を編集"
                 point={selected}
                 onCancel={() => setMode('list')}
-                onSave={() => save('地点情報を更新しました')}
+                onSave={handleUpdatePoint}
                 onRelocate={() => {
                   setMode('pick')
                   setNotice('地図上で新しい位置をクリックしてください')

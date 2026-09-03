@@ -7,3 +7,10 @@ export type Point = {
      latitude: number;
      longitude: number
 }
+
+export type PointFormValues = {
+     name: string;
+     category: string;
+     memo: string;
+     surveyedAt: string;
+}
