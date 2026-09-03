@@ -1,0 +1,6 @@
+import { Button } from '@/components/ui/button'
+import type { Point } from '@/types/point'
+
+export function PointList({ items, selectedId, onSelect }: { items: Point[]; selectedId?: string; onSelect: (point: Point) => void }) {
+  return <section className="min-h-0"><h2 className="text-sm font-medium">登録地点 <span className="font-normal text-muted-foreground">({items.length})</span></h2>{items.length ? <div className="mt-3 flex max-h-72 flex-col overflow-y-auto rounded-lg border">{items.map(point => <Button key={point.id} type="button" variant={selectedId === point.id ? 'secondary' : 'ghost'} onClick={() => onSelect(point)} className="h-auto justify-start rounded-none border-b px-3 py-3 text-left last:border-b-0"><span className="flex flex-col items-start gap-1"><span>{point.name}</span><span className="text-xs font-normal text-muted-foreground">{point.category} / {point.surveyedAt}</span></span></Button>)}</div> : <p className="mt-3 text-sm leading-6 text-muted-foreground">まだ地点が登録されていません。<br />「地点を追加」から登録しましょう。</p>}</section>
+}
