@@ -1,4 +1,8 @@
-import { Link, useParams } from 'react-router-dom'
+import {
+  Link,
+  Navigate,
+  useParams,
+} from 'react-router-dom'
 
 import { Header } from '@/components/layout/Header'
 import { ProjectForm } from '@/components/project/ProjectForm'
@@ -16,6 +20,10 @@ export function ProjectFormPage({
   const project = editing
     ? projects.find((item) => item.id === id)
     : undefined
+
+  if (editing && !project) {
+    return <Navigate to="/projects" replace />
+  }
 
   return (
     <>
