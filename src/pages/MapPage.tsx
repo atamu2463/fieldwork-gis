@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 
 import { Header } from '@/components/layout/Header'
 import { CategoryFilter } from '@/components/map/CategoryFilter'
-import { MapPlaceholder } from '@/components/map/MapPlaceholder'
+import { MapView } from '@/components/map/MapView'
 import { PointForm } from '@/components/point/PointForm'
 import { PointList } from '@/components/point/PointList'
 import { PointPopup } from '@/components/point/PointPopup'
@@ -21,10 +21,19 @@ export function MapPage() {
   const [mode, setMode] =
     useState<'list' | 'pick' | 'create' | 'edit'>('list')
 
+  const [pickPurpose, setPickPurpose] =
+    useState<'create' | 'relocate' | null>(null)
+
   const [selected, setSelected] = useState<Point | undefined>()
   const [filters, setFilters] = useState(categories)
   const [notice, setNotice] = useState('')
   const [pointItems, setPointItems] = useState(points)
+
+  // 一時的にクリック位置を保持する
+  const [pendingLocation, setPendingLocation] = useState<{
+    longitude: number
+    latitude: number
+  } | null>(null)
 
   const filtered = pointItems.filter((point) =>
     filters.includes(point.category),
@@ -40,13 +49,17 @@ export function MapPage() {
     }, 2600)
   }
 
-  //地点登録
+  // 地点登録
   function handleCreatePoint(values: PointFormValues) {
+    if (!pendingLocation) {
+      return
+    }
+
     const newPoint: Point = {
       id: crypto.randomUUID(),
       ...values,
-      latitude: 35.6812,
-      longitude: 139.7671,
+      latitude: pendingLocation.latitude,
+      longitude: pendingLocation.longitude,
     }
 
     setPointItems((currentPoints) => [
@@ -54,10 +67,12 @@ export function MapPage() {
       newPoint,
     ])
 
+    setPendingLocation(null)
+
     save('地点を登録しました')
   }
 
-  //地点情報更新
+  // 地点情報更新
   function handleUpdatePoint(values: PointFormValues) {
     if (!selected) {
       return
@@ -77,14 +92,52 @@ export function MapPage() {
     save('地点情報を更新しました')
   }
 
-
-  //地点選択
+  // 地点選択
   function selectPoint(point: Point) {
     if (mode !== 'pick') {
       setSelected(
         pointItems.find((item) => item.id === point.id) ?? point,
       )
       setMode('list')
+    }
+  }
+
+  // 地図クリック時の処理切り替え
+  function handleMapClick(
+    longitude: number,
+    latitude: number,
+  ) {
+    if (pickPurpose === 'relocate' && selected) {
+      const relocatedPoint = {
+        ...selected,
+        longitude,
+        latitude,
+      }
+
+      setPointItems((currentPoints) =>
+        currentPoints.map((point) =>
+          point.id === selected.id
+            ? relocatedPoint
+            : point,
+        ),
+      )
+
+      setSelected(relocatedPoint)
+      setPickPurpose(null)
+      setMode('list')
+      setNotice('地点の位置を変更しました')
+
+      return
+    }
+
+    if (pickPurpose === 'create') {
+      setPendingLocation({
+        longitude,
+        latitude,
+      })
+
+      setPickPurpose(null)
+      setMode('create')
     }
   }
 
@@ -112,6 +165,7 @@ export function MapPage() {
               className="md:hidden"
               onClick={() => {
                 setMode('pick')
+                setPickPurpose('create')
                 setSelected(undefined)
               }}
             >
@@ -151,7 +205,10 @@ export function MapPage() {
                 onSave={handleUpdatePoint}
                 onRelocate={() => {
                   setMode('pick')
-                  setNotice('地図上で新しい位置をクリックしてください')
+                  setPickPurpose('relocate')
+                  setNotice(
+                    '地図上で新しい位置をクリックしてください',
+                  )
                 }}
               />
             ) : (
@@ -165,6 +222,7 @@ export function MapPage() {
                   className="hidden w-full md:inline-flex"
                   onClick={() => {
                     setMode('pick')
+                    setPickPurpose('create')
                     setSelected(undefined)
                   }}
                 >
@@ -185,12 +243,13 @@ export function MapPage() {
           </aside>
 
           <section className="order-1 min-w-0 bg-muted p-3 md:order-2 md:p-5">
-            <MapPlaceholder
-              points={filtered}
-              picking={mode === 'pick'}
-              onMapClick={() => setMode('create')}
-              onSelect={selectPoint}
-            >
+            <div className="relative h-[500px]">
+              <MapView
+                points={filtered}
+                onSelect={selectPoint}
+                onMapClick={handleMapClick}
+              />
+
               {selected && mode === 'list' && (
                 <PointPopup
                   point={selected}
@@ -206,7 +265,7 @@ export function MapPage() {
                   }}
                 />
               )}
-            </MapPlaceholder>
+            </div>
           </section>
         </div>
       </main>
