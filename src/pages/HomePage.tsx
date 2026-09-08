@@ -1,3 +1,8 @@
+import {
+  Lightbulb,
+  ListFilter,
+  MapPinned,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { Header } from '@/components/layout/Header'
@@ -11,18 +16,24 @@ import {
 
 export function HomePage() {
   const features = [
-    [
-      '調査地点を記録',
-      '地図をクリックして、店舗・空き店舗・公共施設などを登録できます。',
-    ],
-    [
-      '地図で分布を確認',
-      '登録地点を地図上で確認し、カテゴリごとに表示を切り替えられます。',
-    ],
-    [
-      '地域の特徴を考える',
-      '地点の分布を見ながら、なぜその場所に集中しているのかを考察できます。',
-    ],
+    {
+      title: '調査地点を記録',
+      description:
+        '地図をクリックして、店舗・空き店舗・公共施設などを登録できます。',
+      icon: MapPinned,
+    },
+    {
+      title: '地図で分布を確認',
+      description:
+        '登録地点を地図上で確認し、カテゴリごとに表示を切り替えられます。',
+      icon: ListFilter,
+    },
+    {
+      title: '地域の特徴を考える',
+      description:
+        '地点の分布を見ながら、なぜその場所に集中しているのかを考察できます。',
+      icon: Lightbulb,
+    },
   ]
 
   return (
@@ -30,25 +41,31 @@ export function HomePage() {
       <Header />
 
       <main>
+        {/* Hero */}
         <section className="border-b bg-card">
-          <div className="shell grid items-center gap-12 py-16 md:grid-cols-[1.05fr_.95fr] md:py-24">
+          <div className="shell grid items-center gap-8 py-5 md:grid-cols-[1.05fr_.95fr] md:py-6">
             <div>
-              <p className="mb-4 text-sm font-semibold tracking-widest text-primary">
+              <p className="mb-2 text-sm font-semibold tracking-widest text-primary">
                 FIELDWORK × WEB GIS
               </p>
 
-              <h1 className="max-w-2xl font-heading text-4xl font-semibold leading-tight tracking-tight text-balance md:text-5xl">
-                フィールドワークの記録を、地図で振り返ろう
+              <h1 className="max-w-2xl font-heading text-4xl font-semibold leading-tight tracking-tight text-balance md:text-[40px]">
+                フィールドワークの記録を、
+                <br className="hidden md:block" />
+                地図で振り返ろう
               </h1>
 
-              <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground">
+              <p className="mt-3 max-w-xl text-base leading-6 text-muted-foreground">
                 調査した店舗や施設などを地図に登録し、
+                <br className="hidden md:block" />
                 分布や地域の特徴を確認できる学習用WebGISです。
               </p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="mt-4 flex flex-wrap items-center gap-3">
                 <Link
-                  className={buttonVariants({ size: 'lg' })}
+                  className={buttonVariants({
+                    size: 'lg',
+                  })}
                   to="/signup"
                 >
                   無料で始める
@@ -67,13 +84,9 @@ export function HomePage() {
             </div>
 
             <div
-              className="map-area min-h-80"
+              className="map-area h-56 min-h-0! md:h-[230px]"
               aria-label="地図のイメージ"
             >
-              <div className="map-label">
-                調査地点の分布イメージ
-              </div>
-
               <div className="road road-a" />
               <div className="road road-b" />
 
@@ -83,26 +96,51 @@ export function HomePage() {
           </div>
         </section>
 
-        <section className="shell py-16">
-          <p className="text-sm font-semibold text-primary">
-            できること
-          </p>
+        {/* Features */}
+        <section className="bg-muted/30">
+          <div className="shell py-4 md:py-5">
+            <div className="text-center">
+              <p className="text-sm font-semibold text-primary">
+                できること
+              </p>
 
-          <h2 className="mt-2 font-heading text-2xl font-semibold text-balance">
-            観察した事実を、地域の理解につなげる
-          </h2>
+              <h2 className="mt-1 font-heading text-xl font-semibold tracking-tight text-balance md:text-2xl">
+                観察した事実を、地域の理解につなげる
+              </h2>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {features.map(([title, description]) => (
-              <Card key={title}>
-                <CardHeader>
-                  <CardTitle>{title}</CardTitle>
-                  <CardDescription className="leading-6">
-                    {description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+              <p className="mt-1 text-sm text-muted-foreground">
+                フィールドワークの記録を、地図上でシンプルに整理・振り返れます。
+              </p>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {features.map(
+                ({
+                  title,
+                  description,
+                  icon: Icon,
+                }) => (
+                  <Card key={title}>
+                    <CardHeader className="gap-2 p-4">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Icon
+                          className="h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      </div>
+
+                      <CardTitle className="text-lg">
+                        {title}
+                      </CardTitle>
+
+                      <CardDescription className="text-sm leading-5">
+                        {description}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                ),
+              )}
+            </div>
           </div>
         </section>
       </main>
